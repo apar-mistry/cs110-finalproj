@@ -18,7 +18,7 @@ export async function POST(req) {
       dataSource: 'Cluster0',
       database: DATABASE,
       collection: COLLECTION,
-      filter: { roomId },
+      filter: { roomId: roomId },
       update: {
         $push: { messages: newMessage },
       },
