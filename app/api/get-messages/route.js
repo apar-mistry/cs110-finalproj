@@ -8,7 +8,7 @@ const COLLECTION = process.env.COLLECTION_ROOMS;
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const roomId = searchParams.get('roomId');
-
+  console.log(roomId);
   try {
     const response = await axios.post(`${DATA_API_URL}/action/findOne`, {
       dataSource: 'Cluster0',
