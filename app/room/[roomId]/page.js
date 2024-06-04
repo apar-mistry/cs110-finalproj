@@ -63,6 +63,7 @@ export default function RoomPage({ params }) {
     e.preventDefault();
     if (!messageInput) return;
     try {
+      console.log(roomId)
       scrollToBottom();
       const response = await axios.post("/api/post-message", {
         roomId,
