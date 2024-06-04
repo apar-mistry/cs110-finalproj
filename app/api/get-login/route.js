@@ -8,6 +8,9 @@ const COLLECTION = process.env.COLLECTION_ROOMS;
 
 export const POST = async (req) => {
   const { nickname, password } = await req.json();
+  console.log('nickname:', nickname)  
+  console.log(`${DATA_API_URL}/action/find`)
+
 
   // Input sanitization and validation
   // if (!validator.isAlphanumeric(nickname) || !validator.isStrongPassword(password)) {
@@ -16,7 +19,6 @@ export const POST = async (req) => {
 
   try {
     // Check if user exists with the provided nickname and password
-    console.log(`${DATA_API_URL}/action/find`)
     const findResponse = await axios.post(`${DATA_API_URL}/action/find`, {
       dataSource: 'Cluster0',
       database: DATABASE,
