@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const DATA_API_URL = process.env.NEXT_PUBLIC_DATA_API_URL;
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+const DATA_API_URL = process.env.DATA_API_URL;
+const API_KEY = process.env.API_KEY;
 const DATABASE = process.env.DATABASE;
 const COLLECTION = process.env.COLLECTION_ROOMS;
 
