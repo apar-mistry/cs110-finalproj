@@ -60,3 +60,4 @@ export async function GET(req) {
 }
 
 export const runtime = 'experimental-edge';
+export const fetchCache = 'force-no-store';

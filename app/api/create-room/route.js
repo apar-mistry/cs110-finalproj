@@ -57,3 +57,4 @@ export async function POST(req) {
     });
   }
 }
+export const fetchCache = 'force-no-store';

@@ -65,3 +65,4 @@ export async function POST(req) {
 }
 
 export const runtime = 'experimental-edge';
+export const fetchCache = 'force-no-store';
