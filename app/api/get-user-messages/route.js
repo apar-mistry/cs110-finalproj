@@ -37,3 +37,4 @@ export const GET = async (req) => {
     return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
   }
 };
+export const fetchCache = 'force-no-store';

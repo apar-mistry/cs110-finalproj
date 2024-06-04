@@ -8,13 +8,13 @@ const COLLECTION = process.env.COLLECTION_ROOMS;
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const roomId = searchParams.get('roomId');
-
+  console.log(roomId);
   try {
     const response = await axios.post(`${DATA_API_URL}/action/findOne`, {
       dataSource: 'Cluster0',
       database: DATABASE,
       collection: COLLECTION,
-      filter: { roomId },
+      filter: { "roomId": roomId },
     }, {
       headers: {
         'Content-Type': 'application/json',
@@ -29,6 +29,9 @@ export async function GET(req) {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
         },
       });
     } else {
@@ -36,6 +39,9 @@ export async function GET(req) {
         status: 404,
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
         },
       });
     }
@@ -45,10 +51,13 @@ export async function GET(req) {
       status: 500,
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
     });
   }
 }
 
 export const runtime = 'experimental-edge';
-
+export const fetchCache = 'force-no-store';

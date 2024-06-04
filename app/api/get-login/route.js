@@ -4,13 +4,13 @@ import validator from 'validator';
 const DATA_API_URL = process.env.DATA_API_URL;
 const API_KEY = process.env.API_KEY;
 const DATABASE = process.env.DATABASE;
-const COLLECTION = process.env.COLLECTION_ROOMS;
+const COLLECTION = process.env.COLLECTION_USERS;
 
 export const POST = async (req) => {
   const { nickname, password } = await req.json();
   console.log('nickname:', nickname)  
+  console.log(`${API_KEY}`)
   console.log(`${DATA_API_URL}/action/find`)
-
 
   // Input sanitization and validation
   // if (!validator.isAlphanumeric(nickname) || !validator.isStrongPassword(password)) {
@@ -41,6 +41,6 @@ export const POST = async (req) => {
     return new Response(JSON.stringify({ message: 'Login successful' }), { status: 200 });
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
+    return new Response(JSON.stringify({ message: {err} }), { status: 500 });
   }
 };
