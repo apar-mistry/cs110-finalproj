@@ -14,7 +14,7 @@ export async function GET(req) {
       dataSource: 'Cluster0',
       database: DATABASE,
       collection: COLLECTION,
-      filter: { roomId },
+      filter: { roomId: roomId},
     }, {
       headers: {
         'Content-Type': 'application/json',
