@@ -4,7 +4,7 @@ import validator from 'validator';
 const DATA_API_URL = process.env.DATA_API_URL;
 const API_KEY = process.env.API_KEY;
 const DATABASE = process.env.DATABASE;
-const COLLECTION = process.env.COLLECTION_ROOMS;
+const COLLECTION = process.env.COLLECTION_USERS;
 
 export const POST = async (req) => {
     const { nickname, email, password } = await req.json();
