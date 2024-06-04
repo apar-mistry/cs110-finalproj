@@ -11,7 +11,6 @@ export const POST = async (req) => {
   console.log('nickname:', nickname)  
   console.log(`${DATA_API_URL}/action/find`)
 
-
   // Input sanitization and validation
   // if (!validator.isAlphanumeric(nickname) || !validator.isStrongPassword(password)) {
   //   return new Response(JSON.stringify({ message: 'Invalid input' }), { status: 400 });
@@ -41,6 +40,6 @@ export const POST = async (req) => {
     return new Response(JSON.stringify({ message: 'Login successful' }), { status: 200 });
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
+    return new Response(JSON.stringify({ message: {err} }), { status: 500 });
   }
 };
