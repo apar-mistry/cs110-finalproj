@@ -16,6 +16,7 @@ export const POST = async (req) => {
 
   try {
     // Check if user exists with the provided nickname and password
+    console.log(`${DATA_API_URL}/action/find`)
     const findResponse = await axios.post(`${DATA_API_URL}/action/find`, {
       dataSource: 'Cluster0',
       database: DATABASE,

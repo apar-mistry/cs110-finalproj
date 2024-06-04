@@ -14,7 +14,6 @@ export async function POST(req) {
       sender: nickname,
       timestamp: new Date().toISOString(),
     };
-
     const response = await axios.post(`${DATA_API_URL}/action/updateOne`, {
       dataSource: 'Cluster0',
       database: DATABASE,
