@@ -1,93 +1,145 @@
-"use client";
-
+'use client'
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Head from "next/head";
+import { useRouter } from 'next/navigation';
 import {
   Container,
-  Typography,
   Box,
+  Typography,
   TextField,
   Button,
-  Grid,
+  Paper,
+  Tabs,
+  Tab,
 } from "@mui/material";
+import axios from 'axios';
 
 export default function Home() {
+  const [nickname, setNickname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [activeTab, setActiveTab] = useState(0);
   const router = useRouter();
-  const [roomName, setRoomName] = useState("");
-  const [roomId, setRoomId] = useState("");
 
-  const handleCreateRoom = async (e) => {
-    e.preventDefault();
-    const response = await fetch("/api/create-room", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ roomName }),
-    });
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
-    const data = await response.json();
-    if (data.success) {
-      router.push(`/room/${data.roomId}`);
+  const handleLogin = async () => {
+    if (nickname && password) {
+      try {
+        const response = await axios.post('/api/get-login', { nickname, password });
+        if (response.status === 200) {
+          sessionStorage.setItem('nickname', nickname);
+          router.push('/home');
+        }
+      } catch (error) {
+        console.error('Error logging in:', error.response.data.message);
+      }
     }
   };
 
-  const handleJoinRoom = (e) => {
-    e.preventDefault();
-    router.push(`/room/${roomId}`);
+  const handleCreateUser = async () => {
+    if (nickname && email && password) {
+      try {
+        const response = await axios.post('/api/create-user', { nickname, email, password });
+        if (response.status === 201) {
+          sessionStorage.setItem('nickname', nickname);
+          router.push('/home');
+        }
+      } catch (error) {
+        console.error('Error creating user:', error.response.data.message);
+      }
+    }
   };
 
   return (
-    <div>
-      <Head>
-        <title>Chat Application</title>
-      </Head>
-      <Container>
-        <Box mt={5}>
-          <Typography variant="h3" align="center" gutterBottom>
-            Chat Application
+    <Container>
+      <Box mt={10} display="flex" justifyContent="center">
+        <Paper elevation={3} style={{ padding: "20px", width: "400px" }}>
+          <Typography variant="h4" gutterBottom>
+            Welcome
           </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h5" gutterBottom>
-                Create a New Room
-              </Typography>
-              <form onSubmit={handleCreateRoom}>
-                <TextField
-                  label="Enter Room Name"
-                  fullWidth
-                  margin="normal"
-                  value={roomName}
-                  onChange={(e) => setRoomName(e.target.value)}
-                  required
-                />
-                <Button type="submit" variant="contained" color="primary">
-                  Create Room
-                </Button>
-              </form>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h5" gutterBottom>
-                Enter an Existing Room
-              </Typography>
-              <form onSubmit={handleJoinRoom}>
-                <TextField
-                  label="Enter Room ID"
-                  fullWidth
-                  margin="normal"
-                  value={roomId}
-                  onChange={(e) => setRoomId(e.target.value)}
-                  required
-                />
-                <Button type="submit" variant="contained" color="secondary">
-                  Enter Room
-                </Button>
-              </form>
-            </Grid>
-          </Grid>
-        </Box>
-      </Container>
-    </div>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+          >
+            <Tab label="Log In" />
+            <Tab label="Create User" />
+          </Tabs>
+          {activeTab === 0 && (
+            <Box mt={3}>
+              <TextField
+                label="Nickname"
+                fullWidth
+                margin="normal"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                required
+              />
+              <TextField
+                label="Password"
+                type="password"
+                fullWidth
+                margin="normal"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                onClick={handleLogin}
+                fullWidth
+              >
+                Log In
+              </Button>
+            </Box>
+          )}
+          {activeTab === 1 && (
+            <Box mt={3}>
+              <TextField
+                label="Nickname"
+                fullWidth
+                margin="normal"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                required
+              />
+              <TextField
+                label="Email"
+                type="email"
+                fullWidth
+                margin="normal"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <TextField
+                label="Password"
+                type="password"
+                fullWidth
+                margin="normal"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                onClick={handleCreateUser}
+                fullWidth
+              >
+                Create User
+              </Button>
+            </Box>
+          )}
+        </Paper>
+      </Box>
+    </Container>
   );
 }
