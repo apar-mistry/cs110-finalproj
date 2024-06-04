@@ -9,6 +9,7 @@ const COLLECTION = process.env.COLLECTION_ROOMS;
 export const POST = async (req) => {
   const { nickname, password } = await req.json();
   console.log('nickname:', nickname)  
+  console.log(`${API_KEY}`)
   console.log(`${DATA_API_URL}/action/find`)
 
   // Input sanitization and validation
