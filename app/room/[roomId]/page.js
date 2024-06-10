@@ -1,4 +1,3 @@
-// pages/room/[roomId]/page.js
 "use client";
 
 import { useEffect, useState } from "react";
@@ -17,8 +16,12 @@ import {
   InputAdornment,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import SearchBar from "../../components/SearchBar";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function RoomPage({ params }) {
   const { roomId } = params;
@@ -26,6 +29,8 @@ export default function RoomPage({ params }) {
   const [messages, setMessages] = useState([]);
   const [filteredMessages, setFilteredMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editingMessageText, setEditingMessageText] = useState("");
 
   useEffect(() => {
     const savedNickname = sessionStorage.getItem("nickname");
@@ -54,7 +59,6 @@ export default function RoomPage({ params }) {
       const response = await axios.get(`/api/get-messages`, {
         params: { roomId }
       });
-      console.log('Fetched messages:', response.data.messages); // Log fetched messages for debugging
       setMessages(response.data.messages);
       setFilteredMessages(response.data.messages); // Set initial filtered messages
       scrollToBottom();
@@ -66,13 +70,13 @@ export default function RoomPage({ params }) {
   const postMessage = async (e) => {
     e.preventDefault();
     if (!messageInput) return;
+    const messageId = uuidv4(); // Generate a unique messageId
     try {
-      console.log(roomId)
-      scrollToBottom();
       const response = await axios.post("/api/post-message", {
         roomId,
         message: messageInput,
-        nickname
+        nickname,
+        messageId
       });
       if (response.status === 200) {
         setMessageInput("");
@@ -103,7 +107,7 @@ export default function RoomPage({ params }) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
   };
-// no use of api
+
   const handleSearch = (query) => {
     if (query) {
       const filtered = messages.filter((msg) =>
@@ -112,6 +116,44 @@ export default function RoomPage({ params }) {
       setFilteredMessages(filtered);
     } else {
       setFilteredMessages(messages);
+    }
+  };
+
+  const startEditing = (messageId, currentText) => {
+    setEditingMessageId(messageId);
+    setEditingMessageText(currentText);
+  };
+
+  const saveEdit = async () => {
+    if (!editingMessageId || !editingMessageText) return;
+    try {
+      const response = await axios.post("/api/edit-message", {
+        roomId,
+        messageId: editingMessageId,
+        newMessage: editingMessageText,
+        nickname,
+      });
+      if (response.status === 200) {
+        setEditingMessageId(null);
+        setEditingMessageText("");
+        fetchMessages();
+      }
+    } catch (error) {
+      console.error("Error editing message:", error);
+    }
+  };
+
+  const deleteMessage = async (messageId) => {
+    try {
+      const response = await axios.post("/api/delete-message", {
+        roomId,
+        messageId,
+      });
+      if (response.status === 200) {
+        fetchMessages();
+      }
+    } catch (error) {
+      console.error("Error deleting message:", error);
     }
   };
 
@@ -151,16 +193,40 @@ export default function RoomPage({ params }) {
             style={{ height: "400px", overflowY: "scroll", padding: "16px" }}
           >
             <List>
-              {filteredMessages.map((msg, index) => (
-                <ListItem key={index}>
+              {filteredMessages.map((msg) => (
+                <ListItem key={msg.messageId}>
                   <ListItemText
                     primary={
-                      <>
-                        <strong>{msg.sender}</strong>: {msg.message}
-                      </>
+                      editingMessageId === msg.messageId ? (
+                        <TextField
+                          value={editingMessageText}
+                          onChange={(e) => setEditingMessageText(e.target.value)}
+                          fullWidth
+                        />
+                      ) : (
+                        <>
+                          <strong>{msg.sender}</strong>: {msg.message}
+                        </>
+                      )
                     }
                     secondary={formatTimestamp(msg.timestamp)}
                   />
+                  {msg.sender === nickname && (
+                    <>
+                      <IconButton
+                        onClick={() =>
+                          editingMessageId === msg.messageId
+                            ? saveEdit()
+                            : startEditing(msg.messageId, msg.message)
+                        }
+                      >
+                        {editingMessageId === msg.messageId ? <SaveIcon /> : <EditIcon />}
+                      </IconButton>
+                      <IconButton onClick={() => deleteMessage(msg.messageId)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </>
+                  )}
                 </ListItem>
               ))}
             </List>

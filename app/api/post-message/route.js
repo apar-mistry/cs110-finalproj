@@ -7,13 +7,15 @@ const COLLECTION = process.env.COLLECTION_ROOMS;
 
 export async function POST(req) {
   try {
-    const { roomId, message, nickname } = await req.json();
+    const { roomId, message, nickname, messageId } = await req.json();
 
     const newMessage = {
+      messageId,
       message,
       sender: nickname,
       timestamp: new Date().toISOString(),
     };
+
     const response = await axios.post(`${DATA_API_URL}/action/updateOne`, {
       dataSource: 'Cluster0',
       database: DATABASE,
