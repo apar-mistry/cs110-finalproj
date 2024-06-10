@@ -103,7 +103,7 @@ export default function RoomPage({ params }) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
   };
-
+// no use of api
   const handleSearch = (query) => {
     if (query) {
       const filtered = messages.filter((msg) =>
