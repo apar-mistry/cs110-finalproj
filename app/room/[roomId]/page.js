@@ -20,12 +20,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import SearchBar from "../../components/SearchBar";
 import { v4 as uuidv4 } from 'uuid';
 
 export default function RoomPage({ params }) {
   const { roomId } = params;
   const [nickname, setNickname] = useState("");
   const [messages, setMessages] = useState([]);
+  const [filteredMessages, setFilteredMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editingMessageText, setEditingMessageText] = useState("");
@@ -58,6 +60,7 @@ export default function RoomPage({ params }) {
         params: { roomId }
       });
       setMessages(response.data.messages);
+      setFilteredMessages(response.data.messages); // Set initial filtered messages
       scrollToBottom();
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -102,6 +105,17 @@ export default function RoomPage({ params }) {
     const messagesContainer = document.getElementById("messages-container");
     if (messagesContainer) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  };
+
+  const handleSearch = (query) => {
+    if (query) {
+      const filtered = messages.filter((msg) =>
+        msg.message.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredMessages(filtered);
+    } else {
+      setFilteredMessages(messages);
     }
   };
 
@@ -172,13 +186,14 @@ export default function RoomPage({ params }) {
           </Grid>
         </Box>
         <Box mt={3} mb={3}>
+          <SearchBar onSearch={handleSearch} />
           <Paper
             elevation={3}
             id="messages-container"
             style={{ height: "400px", overflowY: "scroll", padding: "16px" }}
           >
             <List>
-              {messages.map((msg) => (
+              {filteredMessages.map((msg) => (
                 <ListItem key={msg.messageId}>
                   <ListItemText
                     primary={
