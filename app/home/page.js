@@ -13,7 +13,9 @@ import {
   Card,
   CardContent,
   CardActions,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function Home() {
   const router = useRouter();
@@ -69,6 +71,23 @@ export default function Home() {
   const handleJoinRoom = (e) => {
     e.preventDefault();
     router.push(`/room/${roomId}`);
+  };
+
+  const handleDeleteRoom = async (roomId) => {
+    const response = await fetch("/api/delete-room", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ roomId }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      setRooms(rooms.filter(room => room.roomId !== roomId));
+    } else {
+      console.error('Error deleting room:', data.message);
+    }
   };
 
   return (
@@ -139,6 +158,13 @@ export default function Home() {
                       >
                         Enter Room
                       </Button>
+                      <IconButton
+                        size="small"
+                        color="secondary"
+                        onClick={() => handleDeleteRoom(room.roomId)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
                     </CardActions>
                   </Card>
                 </Grid>
