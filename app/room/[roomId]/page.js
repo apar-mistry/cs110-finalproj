@@ -196,18 +196,22 @@ export default function RoomPage({ params }) {
                     }
                     secondary={formatTimestamp(msg.timestamp)}
                   />
-                  <IconButton
-                    onClick={() =>
-                      editingMessageId === msg.messageId
-                        ? saveEdit()
-                        : startEditing(msg.messageId, msg.message)
-                    }
-                  >
-                    {editingMessageId === msg.messageId ? <SaveIcon /> : <EditIcon />}
-                  </IconButton>
-                  <IconButton onClick={() => deleteMessage(msg.messageId)}>
-                    <DeleteIcon />
-                  </IconButton>
+                  {msg.sender === nickname && (
+                    <>
+                      <IconButton
+                        onClick={() =>
+                          editingMessageId === msg.messageId
+                            ? saveEdit()
+                            : startEditing(msg.messageId, msg.message)
+                        }
+                      >
+                        {editingMessageId === msg.messageId ? <SaveIcon /> : <EditIcon />}
+                      </IconButton>
+                      <IconButton onClick={() => deleteMessage(msg.messageId)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </>
+                  )}
                 </ListItem>
               ))}
             </List>
