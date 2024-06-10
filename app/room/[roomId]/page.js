@@ -1,3 +1,4 @@
+// pages/room/[roomId]/page.js
 "use client";
 
 import { useEffect, useState } from "react";
@@ -17,11 +18,13 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
+import SearchBar from "../../components/SearchBar";
 
 export default function RoomPage({ params }) {
   const { roomId } = params;
   const [nickname, setNickname] = useState("");
   const [messages, setMessages] = useState([]);
+  const [filteredMessages, setFilteredMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
 
   useEffect(() => {
@@ -53,6 +56,7 @@ export default function RoomPage({ params }) {
       });
       console.log('Fetched messages:', response.data.messages); // Log fetched messages for debugging
       setMessages(response.data.messages);
+      setFilteredMessages(response.data.messages); // Set initial filtered messages
       scrollToBottom();
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -100,6 +104,17 @@ export default function RoomPage({ params }) {
     }
   };
 
+  const handleSearch = (query) => {
+    if (query) {
+      const filtered = messages.filter((msg) =>
+        msg.message.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredMessages(filtered);
+    } else {
+      setFilteredMessages(messages);
+    }
+  };
+
   return (
     <div>
       <Head>
@@ -129,13 +144,14 @@ export default function RoomPage({ params }) {
           </Grid>
         </Box>
         <Box mt={3} mb={3}>
+          <SearchBar onSearch={handleSearch} />
           <Paper
             elevation={3}
             id="messages-container"
             style={{ height: "400px", overflowY: "scroll", padding: "16px" }}
           >
             <List>
-              {messages.map((msg, index) => (
+              {filteredMessages.map((msg, index) => (
                 <ListItem key={index}>
                   <ListItemText
                     primary={
