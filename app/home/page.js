@@ -17,8 +17,8 @@ import {
   Alert
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { red } from "@mui/material/colors";
 import axios from "axios";
+
 // Utility functions to safely access sessionStorage
 const getSessionStorageItem = (key) => {
   if (typeof window !== "undefined") {
@@ -39,20 +39,23 @@ export default function Home() {
   const [roomId, setRoomId] = useState("");
   const [rooms, setRooms] = useState([]);
   const [errorMessage, setError] = useState("");
+  const [nickname, setNickname] = useState("");
+
   useEffect(() => {
-    const nickname = getSessionStorageItem("nickname");
-    if (nickname === null) {
+    const storedNickname = getSessionStorageItem("nickname");
+    setNickname(storedNickname);
+    if (storedNickname === null) {
       router.push(`/`);
       return;
     }
 
     const fetchChats = async () => {
-      console.log(`Fetching chats for nickname: ${nickname}`);
+      console.log(`Fetching chats for nickname: ${storedNickname}`);
 
       const response = await fetch("/api/get-user-messages", {
         method: "GET",
         headers: {
-          nickname: nickname,
+          nickname: storedNickname,
         },
       });
 
@@ -122,7 +125,6 @@ export default function Home() {
   };
 
   return (
-    
     <div>
       <Button
         variant="outlined"
@@ -137,7 +139,7 @@ export default function Home() {
       <Container>
         <Box mt={5}>
           <Typography variant="h3" align="center" gutterBottom>
-            Welcome to R'Chat, {getSessionStorageItem("nickname").charAt(0,1).toUpperCase() + getSessionStorageItem("nickname").slice(1)}!
+            Welcome to R'Chat, {nickname ? `${nickname.charAt(0).toUpperCase()}${nickname.slice(1)}` : "Guest"}!
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
@@ -163,7 +165,7 @@ export default function Home() {
                 Enter an Existing Room
               </Typography>
               <form onSubmit={handleJoinRoom}>
-              {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+                {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
                 <TextField
                   label="Enter Room ID"
                   fullWidth
