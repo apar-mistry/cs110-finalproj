@@ -1,5 +1,6 @@
 'use client';
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import {
   Container,
@@ -13,6 +14,7 @@ import {
   Alert,
 } from "@mui/material";
 import axios from 'axios';
+import { Typewriter } from 'react-simple-typewriter';
 import BokehBackground from "./components/BokehBackground";
 
 export default function Home() {
@@ -58,95 +60,102 @@ export default function Home() {
 
   return (
     <Container>
-        <Box mt={10} display="flex" justifyContent="center">
-          <Paper elevation={3} style={{ padding: "20px", width: "400px" }}>
-            <Typography variant="h4" gutterBottom>
-              Welcome
-            </Typography>
-            <Tabs
-              value={activeTab}
-              onChange={handleTabChange}
-              indicatorColor="primary"
-              textColor="primary"
-              centered
-            >
-              <Tab label="Log In" />
-              <Tab label="Create User" />
-            </Tabs>
-            {activeTab === 0 && (
-              <Box mt={3}>
-                {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-                <TextField
-                  label="Nickname"
-                  fullWidth
-                  margin="normal"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  required
-                />
-                <TextField
-                  label="Password"
-                  type="password"
-                  fullWidth
-                  margin="normal"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="contained"
-                  color="primary"
-                  onClick={handleLogin}
-                  fullWidth
-                >
-                  Log In
-                </Button>
-              </Box>
-            )}
-            {activeTab === 1 && (
-              <Box mt={3}>
-                {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-                <TextField
-                  label="Nickname"
-                  fullWidth
-                  margin="normal"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  required
-                />
-                <TextField
-                  label="Email"
-                  type="email"
-                  fullWidth
-                  margin="normal"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <TextField
-                  label="Password"
-                  type="password"
-                  fullWidth
-                  margin="normal"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="contained"
-                  color="primary"
-                  onClick={handleCreateUser}
-                  fullWidth
-                >
-                  Create User
-                </Button>
-              </Box>
-            )}
-          </Paper>
-        </Box>
-      
+      <Box mt={10} display="flex" justifyContent="center">
+        <Paper elevation={3} style={{ padding: "20px", width: "400px" }}>
+          <Typography variant="h4" gutterBottom>
+            <Typewriter
+              words={["Welcome to R'Chat"]}
+              loop={1}
+              cursor
+              cursorStyle="_"
+              typeSpeed={70}
+              deleteSpeed={50}
+              delaySpeed={1000}
+            />
+          </Typography>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+          >
+            <Tab label="Log In" />
+            <Tab label="Create User" />
+          </Tabs>
+          {activeTab === 0 && (
+            <Box mt={3}>
+              {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+              <TextField
+                label="Nickname"
+                fullWidth
+                margin="normal"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                required
+              />
+              <TextField
+                label="Password"
+                type="password"
+                fullWidth
+                margin="normal"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                onClick={handleLogin}
+                fullWidth
+              >
+                Log In
+              </Button>
+            </Box>
+          )}
+          {activeTab === 1 && (
+            <Box mt={3}>
+              {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+              <TextField
+                label="Nickname"
+                fullWidth
+                margin="normal"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                required
+              />
+              <TextField
+                label="Email"
+                type="email"
+                fullWidth
+                margin="normal"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <TextField
+                label="Password"
+                type="password"
+                fullWidth
+                margin="normal"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                onClick={handleCreateUser}
+                fullWidth
+              >
+                Create User
+              </Button>
+            </Box>
+          )}
+        </Paper>
+      </Box>
     </Container>
   );
 }
