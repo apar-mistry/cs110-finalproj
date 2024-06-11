@@ -174,16 +174,16 @@ export default function RoomPage({ params }) {
             spacing={2}
           >
             <Grid item>
-              <Typography variant="h4">Chat Room</Typography>
+              <Typography variant="h4">R'Chat Room</Typography>
             </Grid>
             <Grid item>
-              <Typography>
-                Room ID: <strong>{roomId}</strong>
+              <Typography variant="h4">
+                Room ID: {roomId}
               </Typography>
             </Grid>
             <Grid item>
-              <Typography>
-                Nickname: <strong>{nickname}</strong>
+              <Typography variant="h4">
+                Nickname: {nickname}
               </Typography>
             </Grid>
           </Grid>

@@ -14,10 +14,11 @@ import {
   CardContent,
   CardActions,
   IconButton,
+  Alert
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { red } from "@mui/material/colors";
-
+import axios from "axios";
 // Utility functions to safely access sessionStorage
 const getSessionStorageItem = (key) => {
   if (typeof window !== "undefined") {
@@ -37,7 +38,7 @@ export default function Home() {
   const [roomName, setRoomName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [rooms, setRooms] = useState([]);
-
+  const [errorMessage, setError] = useState("");
   useEffect(() => {
     const nickname = getSessionStorageItem("nickname");
     if (nickname === null) {
@@ -83,9 +84,19 @@ export default function Home() {
     }
   };
 
-  const handleJoinRoom = (e) => {
+  const handleJoinRoom = async (e) => {
     e.preventDefault();
-    router.push(`/room/${roomId}`);
+    try {
+      const response = await axios.get(`/api/get-messages`, {
+        params: { roomId },
+      });
+      if (response.status === 200) {
+        router.push(`/room/${roomId}`);
+        setError("");
+      }
+    } catch (error) {
+      setError("Error joining room " + roomId + ", Room ID not found");
+    }
   };
 
   const handleDeleteRoom = async (roomId) => {
@@ -111,6 +122,7 @@ export default function Home() {
   };
 
   return (
+    
     <div>
       <Button
         variant="outlined"
@@ -120,12 +132,12 @@ export default function Home() {
         Log Out
       </Button>
       <Head>
-        <title>Chat Application</title>
+        <title>Welcome to R'Chat</title>
       </Head>
       <Container>
         <Box mt={5}>
           <Typography variant="h3" align="center" gutterBottom>
-            Chat Application
+            Welcome to R'Chat, {getSessionStorageItem("nickname").charAt(0,1).toUpperCase() + getSessionStorageItem("nickname").slice(1)}!
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
@@ -151,6 +163,7 @@ export default function Home() {
                 Enter an Existing Room
               </Typography>
               <form onSubmit={handleJoinRoom}>
+              {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
                 <TextField
                   label="Enter Room ID"
                   fullWidth
