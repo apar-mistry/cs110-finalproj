@@ -183,7 +183,7 @@ export default function RoomPage({ params }) {
             </Grid>
             <Grid item>
               <Typography variant="h4">
-                Nickname: {nickname.at(0).toUpperCase() + nickname.slice(1)}
+                Nickname: {nickname}
               </Typography>
             </Grid>
           </Grid>
