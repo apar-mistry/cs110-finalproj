@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -18,22 +18,34 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { red } from "@mui/material/colors";
 
+// Utility functions to safely access sessionStorage
+const getSessionStorageItem = (key) => {
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem(key);
+  }
+  return null;
+};
+
+const removeSessionStorageItem = (key) => {
+  if (typeof window !== "undefined") {
+    sessionStorage.removeItem(key);
+  }
+};
+
 export default function Home() {
   const router = useRouter();
   const [roomName, setRoomName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [rooms, setRooms] = useState([]);
-  if (sessionStorage.getItem("nickname") === null) {
-    router.push(`/`);
-  }
-  useEffect(() => {
-    const fetchChats = async () => {
-      const nickname = sessionStorage.getItem("nickname");
-      if (!nickname) {
-        router.push("/");
-        return;
-      }
 
+  useEffect(() => {
+    const nickname = getSessionStorageItem("nickname");
+    if (nickname === null) {
+      router.push(`/`);
+      return;
+    }
+
+    const fetchChats = async () => {
       console.log(`Fetching chats for nickname: ${nickname}`);
 
       const response = await fetch("/api/get-user-messages", {
@@ -93,14 +105,16 @@ export default function Home() {
     }
   };
 
+  const handleLogout = () => {
+    removeSessionStorageItem("nickname");
+    router.push(`/`);
+  };
+
   return (
     <div>
       <Button
         variant="outlined"
-        onClick={() => {
-          sessionStorage.removeItem("nickname");
-          router.push(`/`);
-        }}
+        onClick={handleLogout}
         sx={{ color: 'red', borderColor: 'red', '&:hover': { borderColor: 'red', backgroundColor: 'rgba(255, 0, 0, 0.04)' } }}
       >
         Log Out
