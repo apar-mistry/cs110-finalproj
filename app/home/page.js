@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -15,37 +15,40 @@ import {
   CardActions,
   IconButton,
 } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { red } from "@mui/material/colors";
 
 export default function Home() {
   const router = useRouter();
   const [roomName, setRoomName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [rooms, setRooms] = useState([]);
-
+  if (sessionStorage.getItem("nickname") === null) {
+    router.push(`/`);
+  }
   useEffect(() => {
     const fetchChats = async () => {
-      const nickname = sessionStorage.getItem('nickname');
+      const nickname = sessionStorage.getItem("nickname");
       if (!nickname) {
-        router.push('/');
+        router.push("/");
         return;
       }
 
       console.log(`Fetching chats for nickname: ${nickname}`);
 
-      const response = await fetch('/api/get-user-messages', {
-        method: 'GET',
+      const response = await fetch("/api/get-user-messages", {
+        method: "GET",
         headers: {
-          'nickname': nickname
-        }
+          nickname: nickname,
+        },
       });
 
       const data = await response.json();
       if (response.ok) {
-        console.log('Rooms fetched:', data.rooms);
+        console.log("Rooms fetched:", data.rooms);
         setRooms(data.rooms);
       } else {
-        console.error('Error fetching chats:', data.message);
+        console.error("Error fetching chats:", data.message);
       }
     };
 
@@ -84,14 +87,24 @@ export default function Home() {
 
     const data = await response.json();
     if (data.success) {
-      setRooms(rooms.filter(room => room.roomId !== roomId));
+      setRooms(rooms.filter((room) => room.roomId !== roomId));
     } else {
-      console.error('Error deleting room:', data.message);
+      console.error("Error deleting room:", data.message);
     }
   };
 
   return (
     <div>
+      <Button
+        variant="outlined"
+        onClick={() => {
+          sessionStorage.removeItem("nickname");
+          router.push(`/`);
+        }}
+        sx={{ color: 'red', borderColor: 'red', '&:hover': { borderColor: 'red', backgroundColor: 'rgba(255, 0, 0, 0.04)' } }}
+      >
+        Log Out
+      </Button>
       <Head>
         <title>Chat Application</title>
       </Head>
@@ -148,7 +161,9 @@ export default function Home() {
                   <Card>
                     <CardContent>
                       <Typography variant="h6">{room.roomName}</Typography>
-                      <Typography variant="body2">Room ID: {room.roomId}</Typography>
+                      <Typography variant="body2">
+                        Room ID: {room.roomId}
+                      </Typography>
                     </CardContent>
                     <CardActions>
                       <Button

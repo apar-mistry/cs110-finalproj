@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Head from "next/head";
+import { useRouter } from "next/navigation";
 import {
   Container,
   Box,
@@ -14,16 +15,20 @@ import {
   ListItem,
   ListItemText,
   InputAdornment,
+  Button
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import EditIcon from "@mui/icons-material/Edit";
+import HomeIcon from '@mui/icons-material/Home';
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import SearchBar from "../../components/SearchBar";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export default function RoomPage({ params }) {
+  const router = useRouter();
+
   const { roomId } = params;
   const [nickname, setNickname] = useState("");
   const [messages, setMessages] = useState([]);
@@ -31,20 +36,15 @@ export default function RoomPage({ params }) {
   const [messageInput, setMessageInput] = useState("");
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editingMessageText, setEditingMessageText] = useState("");
-
+  if(sessionStorage.getItem("nickname") === null) {
+    router.push(`/`);
+  }
   useEffect(() => {
     const savedNickname = sessionStorage.getItem("nickname");
     if (savedNickname) {
       setNickname(savedNickname);
     } else {
-      const nickname = prompt("Enter your nickname:", "Anonymous");
-      if (nickname !== null) {
-        setNickname(nickname);
-        sessionStorage.setItem("nickname", nickname);
-      } else {
-        setNickname("Anonymous");
-        sessionStorage.setItem("nickname", "Anonymous");
-      }
+      router.push("/");
     }
 
     const interval = setInterval(fetchMessages, 5000);
@@ -57,13 +57,13 @@ export default function RoomPage({ params }) {
     if (!roomId) return;
     try {
       const response = await axios.get(`/api/get-messages`, {
-        params: { roomId }
+        params: { roomId },
       });
       setMessages(response.data.messages);
       setFilteredMessages(response.data.messages); // Set initial filtered messages
       scrollToBottom();
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      console.error("Error fetching messages:", error);
     }
   };
 
@@ -76,14 +76,14 @@ export default function RoomPage({ params }) {
         roomId,
         message: messageInput,
         nickname,
-        messageId
+        messageId,
       });
       if (response.status === 200) {
         setMessageInput("");
         fetchMessages();
       }
     } catch (error) {
-      console.error('Error posting message:', error);
+      console.error("Error posting message:", error);
     }
   };
 
@@ -162,6 +162,9 @@ export default function RoomPage({ params }) {
       <Head>
         <title>Room {roomId}</title>
       </Head>
+      <Button variant="outlined" startIcon={<HomeIcon />} onClick={() => router.push(`/home`)}>
+        Home
+      </Button>
       <Container>
         <Box mt={3}>
           <Grid
@@ -200,7 +203,9 @@ export default function RoomPage({ params }) {
                       editingMessageId === msg.messageId ? (
                         <TextField
                           value={editingMessageText}
-                          onChange={(e) => setEditingMessageText(e.target.value)}
+                          onChange={(e) =>
+                            setEditingMessageText(e.target.value)
+                          }
                           fullWidth
                         />
                       ) : (
@@ -220,7 +225,11 @@ export default function RoomPage({ params }) {
                             : startEditing(msg.messageId, msg.message)
                         }
                       >
-                        {editingMessageId === msg.messageId ? <SaveIcon /> : <EditIcon />}
+                        {editingMessageId === msg.messageId ? (
+                          <SaveIcon />
+                        ) : (
+                          <EditIcon />
+                        )}
                       </IconButton>
                       <IconButton onClick={() => deleteMessage(msg.messageId)}>
                         <DeleteIcon />
