@@ -13,7 +13,10 @@ import {
 } from "@mui/material";
 import axios from 'axios';
 
+import useStyles from './styles';
+
 export default function Home() {
+  const classes = useStyles(); 
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -54,9 +57,9 @@ export default function Home() {
 
   return (
     <Container>
-      <Box mt={10} display="flex" justifyContent="center">
-        <Paper elevation={3} style={{ padding: "20px", width: "400px" }}>
-          <Typography variant="h4" gutterBottom>
+      <Box className={classes.loginContainer}>
+        <Paper elevation={3} className={classes.loginPaper}>
+          <Typography variant="h4" className={classes.loginTitle} gutterBottom>
             Welcome
           </Typography>
           <Tabs
@@ -65,6 +68,7 @@ export default function Home() {
             indicatorColor="primary"
             textColor="primary"
             centered
+            className={classes.tabs} // Added className
           >
             <Tab label="Log In" />
             <Tab label="Create User" />
@@ -78,6 +82,7 @@ export default function Home() {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 required
+                className={classes.inputField} // Added className
               />
               <TextField
                 label="Password"
@@ -87,11 +92,12 @@ export default function Home() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className={classes.inputField} // Added className
               />
               <Button
                 type="button"
                 variant="contained"
-                color="primary"
+                className={classes.formButton} // Added className
                 onClick={handleLogin}
                 fullWidth
               >
@@ -108,6 +114,7 @@ export default function Home() {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 required
+                className={classes.inputField} // Added className
               />
               <TextField
                 label="Email"
@@ -117,6 +124,7 @@ export default function Home() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className={classes.inputField} // Added className
               />
               <TextField
                 label="Password"
@@ -126,11 +134,12 @@ export default function Home() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className={classes.inputField} // Added className
               />
               <Button
                 type="button"
                 variant="contained"
-                color="primary"
+                className={classes.formButton} // Added className
                 onClick={handleCreateUser}
                 fullWidth
               >
