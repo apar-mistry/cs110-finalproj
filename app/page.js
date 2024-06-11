@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import {
@@ -10,6 +10,7 @@ import {
   Paper,
   Tabs,
   Tab,
+  Alert,
 } from "@mui/material";
 import axios from 'axios';
 
@@ -18,10 +19,12 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [activeTab, setActiveTab] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
+    setErrorMessage(""); // Clear the error message when the tab changes
   };
 
   const handleLogin = async () => {
@@ -33,7 +36,7 @@ export default function Home() {
           router.push('/home');
         }
       } catch (error) {
-        console.error('Error logging in:', error.response.data.message);
+        setErrorMessage('Error logging in: ' + error.response?.data?.message || error.message);
       }
     }
   };
@@ -47,7 +50,7 @@ export default function Home() {
           router.push('/home');
         }
       } catch (error) {
-        console.error('Error creating user:', error.response.data.message);
+        setErrorMessage('Error creating user: ' + error.response?.data?.message || error.message);
       }
     }
   };
@@ -71,6 +74,7 @@ export default function Home() {
           </Tabs>
           {activeTab === 0 && (
             <Box mt={3}>
+              {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
               <TextField
                 label="Nickname"
                 fullWidth
@@ -101,6 +105,7 @@ export default function Home() {
           )}
           {activeTab === 1 && (
             <Box mt={3}>
+              {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
               <TextField
                 label="Nickname"
                 fullWidth
