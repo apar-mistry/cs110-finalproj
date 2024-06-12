@@ -1,4 +1,5 @@
 import axios from 'axios';
+import bcrypt from 'bcrypt';
 import validator from 'validator';
 
 const DATA_API_URL = process.env.DATA_API_URL;
@@ -8,9 +9,6 @@ const COLLECTION = process.env.COLLECTION_USERS;
 
 export const POST = async (req) => {
   const { nickname, password } = await req.json();
-  console.log('nickname:', nickname)  
-  console.log(`${API_KEY}`)
-  console.log(`${DATA_API_URL}/action/find`)
 
   // Input sanitization and validation
   // if (!validator.isAlphanumeric(nickname) || !validator.isStrongPassword(password)) {
@@ -18,14 +16,13 @@ export const POST = async (req) => {
   // }
 
   try {
-    // Check if user exists with the provided nickname and password
+    // Check if user exists with the provided nickname
     const findResponse = await axios.post(`${DATA_API_URL}/action/find`, {
       dataSource: 'Cluster0',
       database: DATABASE,
       collection: COLLECTION,
       filter: {
-        nickname: { $eq: nickname },
-        password: { $eq: password }
+        nickname: { $eq: nickname }
       }
     }, {
       headers: {
@@ -34,13 +31,22 @@ export const POST = async (req) => {
       }
     });
 
-    if (findResponse.data.documents.length === 0) {
+    const user = findResponse.data.documents[0];
+
+    if (!user) {
+      return new Response(JSON.stringify({ message: 'Invalid nickname or password' }), { status: 401 });
+    }
+
+    // Compare the entered password with the hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
       return new Response(JSON.stringify({ message: 'Invalid nickname or password' }), { status: 401 });
     }
 
     return new Response(JSON.stringify({ message: 'Login successful' }), { status: 200 });
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ message: {err} }), { status: 500 });
+    return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
   }
 };

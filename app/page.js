@@ -1,5 +1,6 @@
-'use client'
-import { useState } from "react";
+'use client';
+
+import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import {
   Container,
@@ -10,18 +11,23 @@ import {
   Paper,
   Tabs,
   Tab,
+  Alert,
 } from "@mui/material";
 import axios from 'axios';
+import { Typewriter } from 'react-simple-typewriter';
+import BokehBackground from "./components/BokehBackground";
 
 export default function Home() {
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [activeTab, setActiveTab] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
+    setErrorMessage(""); // Clear the error message when the tab changes
   };
 
   const handleLogin = async () => {
@@ -33,7 +39,7 @@ export default function Home() {
           router.push('/home');
         }
       } catch (error) {
-        console.error('Error logging in:', error.response.data.message);
+        setErrorMessage('Error logging in: ' + error.response?.data?.message || error.message);
       }
     }
   };
@@ -47,7 +53,7 @@ export default function Home() {
           router.push('/home');
         }
       } catch (error) {
-        console.error('Error creating user:', error.response.data.message);
+        setErrorMessage('Error creating user: ' + error.response?.data?.message || error.message);
       }
     }
   };
@@ -57,7 +63,15 @@ export default function Home() {
       <Box mt={10} display="flex" justifyContent="center">
         <Paper elevation={3} style={{ padding: "20px", width: "400px" }}>
           <Typography variant="h4" gutterBottom>
-            Welcome
+            <Typewriter
+              words={["Welcome to R'Chat"]}
+              loop={1}
+              cursor
+              cursorStyle="_"
+              typeSpeed={70}
+              deleteSpeed={50}
+              delaySpeed={1000}
+            />
           </Typography>
           <Tabs
             value={activeTab}
@@ -71,6 +85,7 @@ export default function Home() {
           </Tabs>
           {activeTab === 0 && (
             <Box mt={3}>
+              {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
               <TextField
                 label="Nickname"
                 fullWidth
@@ -101,6 +116,7 @@ export default function Home() {
           )}
           {activeTab === 1 && (
             <Box mt={3}>
+              {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
               <TextField
                 label="Nickname"
                 fullWidth
